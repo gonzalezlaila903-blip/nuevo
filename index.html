@@ -56,35 +56,34 @@ function generarJuego() {
         </ul>`).join("");
     }
 
-    if (tipo === "vf") {
-        zona.innerHTML = "<h2>Verdadero o Falso</h2>" +
-        frases.slice(0,4).map((f,i)=> 
-        `<p>${i+1}) ${f} — ¿Verdadero o Falso?</p>`).join("");
-    }
+  if (tipo === "vf") {
+  zona.innerHTML =
+    "<h2>Verdadero o Falso</h2>" +
+    "<p>Elegí una opción en cada pregunta:</p>" +
+    frases.slice(0, 4).map((f, i) =>
+      `<div style="padding:10px;margin:10px 0;border:1px solid #ddd;border-radius:10px;">
+        <p><b>${i + 1})</b> ${f}</p>
 
-    if (tipo === "flash") {
-        zona.innerHTML = "<h2>Tarjetas de estudio</h2>" +
-        frases.slice(0,5).map((f,i)=> 
-        `<div style='padding:10px;margin:10px;border:1px solid #ccc;border-radius:8px;'>
-            <b>Tarjeta ${i+1}:</b> ${f}
-        </div>`).join("");
-    }
+        <label style="margin-right:15px;">
+          <input type="radio" name="vf${i}" value="V"> ✅ Verdadero
+        </label>
 
-    if (tipo === "memoria") {
-        zona.innerHTML = "<h2>Juego de memoria (simple)</h2>" +
-        frases.slice(0,6).map((f,i)=> 
-        `<p>🧩 Palabra clave ${i+1}: <b>${f.split(" ")[0]}</b></p>`).join("");
-    }
+        <label>
+          <input type="radio" name="vf${i}" value="F"> ❌ Falso
+        </label>
+      </div>`
+    ).join("") +
+    `<button id="verRespuestas" style="margin-top:10px;padding:10px 14px;border:none;border-radius:10px;background:#4e5af7;color:white;cursor:pointer;">
+      Ver qué marqué
+    </button>
+    <div id="salidaVF" style="margin-top:10px;font-weight:bold;"></div>`;
 
-    if (tipo === "drag") {
-        zona.innerHTML = "<h2>Ordenar conceptos</h2>" +
-        frases.slice(0,4).map((f,i)=> 
-        `<div draggable='true' style='padding:8px;margin:5px;background:#e8e8ff;border-radius:5px;'>
-            ${f.split(" ").slice(0,5).join(" ")}
-        </div>`).join("");
+  document.getElementById("verRespuestas").onclick = () => {
+    let resumen = "";
+    for (let i = 0; i < 4; i++) {
+      const elegido = document.querySelector(`input[name="vf${i}"]:checked`);
+      resumen += `Pregunta ${i + 1}: ${elegido ? (elegido.value === "V" ? "Verdadero" : "Falso") : "Sin responder"}<br>`;
     }
+    document.getElementById("salidaVF").innerHTML = resumen;
+  };
 }
-</script>
-
-</body>
-</html>
