@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma de Juegos para Estudiar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <h1>📚 Plataforma de Juegos para Estudiar</h1>
+</nav>
+
+<div class="container">
+    <section class="panel">
+        <h2>📘 Cargar tu resumen</h2>
+        <textarea id="resumen" placeholder="Pegá aquí tu resumen o texto de estudio..."></textarea>
+
+        <h2>🎮 Elegí un tipo de juego</h2>
+        <select id="tipoJuego">
+            <option value="quiz">Preguntas de opción múltiple</option>
+            <option value="vf">Verdadero o Falso</option>
+            <option value="flash">Tarjetas (Flashcards)</option>
+            <option value="memoria">Juego de Memoria</option>
+            <option value="drag">Ordenar conceptos</option>
+        </select>
+
+        <button onclick="generarJuego()">Crear el juego</button>
+    </section>
+
+    <section id="juego" class="juego"></section>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
