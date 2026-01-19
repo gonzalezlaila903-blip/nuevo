@@ -32,6 +32,59 @@
     <section id="juego" class="juego"></section>
 </div>
 
-<script src="main.js"></script>
+<script>
+function generarJuego() {
+    const texto = document.getElementById("resumen").value.trim();
+    const tipo = document.getElementById("tipoJuego").value;
+    const zona = document.getElementById("juego");
+
+    if (!texto) {
+        zona.innerHTML = "<p>⚠ Primero tenés que cargar un resumen.</p>";
+        return;
+    }
+
+    const frases = texto.split(".").filter(t => t.length > 20);
+
+    if (tipo === "quiz") {
+        zona.innerHTML = "<h2>Preguntas de opción múltiple</h2>" +
+        frases.slice(0,3).map((f,i)=>
+        `<p><b>Pregunta ${i+1}:</b> ${f.split(" ").slice(0,8).join(" ")}...</p>
+        <ul>
+            <li>Opción A</li>
+            <li>Opción B</li>
+            <li>Opción C</li>
+        </ul>`).join("");
+    }
+
+    if (tipo === "vf") {
+        zona.innerHTML = "<h2>Verdadero o Falso</h2>" +
+        frases.slice(0,4).map((f,i)=> 
+        `<p>${i+1}) ${f} — ¿Verdadero o Falso?</p>`).join("");
+    }
+
+    if (tipo === "flash") {
+        zona.innerHTML = "<h2>Tarjetas de estudio</h2>" +
+        frases.slice(0,5).map((f,i)=> 
+        `<div style='padding:10px;margin:10px;border:1px solid #ccc;border-radius:8px;'>
+            <b>Tarjeta ${i+1}:</b> ${f}
+        </div>`).join("");
+    }
+
+    if (tipo === "memoria") {
+        zona.innerHTML = "<h2>Juego de memoria (simple)</h2>" +
+        frases.slice(0,6).map((f,i)=> 
+        `<p>🧩 Palabra clave ${i+1}: <b>${f.split(" ")[0]}</b></p>`).join("");
+    }
+
+    if (tipo === "drag") {
+        zona.innerHTML = "<h2>Ordenar conceptos</h2>" +
+        frases.slice(0,4).map((f,i)=> 
+        `<div draggable='true' style='padding:8px;margin:5px;background:#e8e8ff;border-radius:5px;'>
+            ${f.split(" ").slice(0,5).join(" ")}
+        </div>`).join("");
+    }
+}
+</script>
+
 </body>
 </html>
