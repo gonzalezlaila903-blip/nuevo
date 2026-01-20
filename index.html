@@ -1,135 +1,134 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Plataforma de Juegos para Estudiar</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body{margin:0;font-family:Arial;background:#f5f7fa}
+    .navbar{background:#4e5af7;color:#fff;padding:20px;text-align:center;font-size:1.6rem}
+    .container{display:flex;gap:20px;padding:20px;flex-wrap:wrap}
+    .panel{flex:1;min-width:320px;background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+    .juego{flex:1;min-width:320px;background:#fff;padding:20px;border-radius:12px;min-height:200px;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+    textarea{width:100%;height:180px;padding:10px}
+    select,button{width:100%;padding:12px;margin-top:10px;border-radius:10px}
+    button{background:#4e5af7;color:#fff;border:none;cursor:pointer}
+    .card{border:1px solid #ddd;border-radius:12px;padding:12px;margin:10px 0}
+    .opciones label{margin-right:14px;display:inline-block;margin-top:6px}
+    .ok{color:#15803d;font-weight:bold}
+    .bad{color:#b91c1c;font-weight:bold}
+    .warn{color:#b45309;font-weight:bold}
+  </style>
 </head>
 <body>
+  <nav class="navbar">📚 Plataforma de Juegos para Estudiar</nav>
 
-<nav class="navbar">
-  <h1>📚 Plataforma de Juegos para Estudiar</h1>
-</nav>
+  <div class="container">
+    <section class="panel">
+      <h2>📘 Cargar tu resumen</h2>
+      <textarea id="resumen" placeholder="Pegá aquí tu resumen o texto de estudio..."></textarea>
 
-<div class="container">
-  <section class="panel">
-    <h2>📘 Cargar tu resumen</h2>
-    <textarea id="resumen" placeholder="Pegá aquí tu resumen o texto de estudio..."></textarea>
+      <h2>🎮 Elegí un tipo de juego</h2>
+      <select id="tipoJuego">
+        <option value="vf">Verdadero o Falso</option>
+        <option value="quiz">Opción múltiple</option>
+        <option value="flash">Tarjetas</option>
+      </select>
 
-    <h2>🎮 Elegí un tipo de juego</h2>
-    <select id="tipoJuego">
-      <option value="quiz">Preguntas de opción múltiple</option>
-      <option value="vf">Verdadero o Falso</option>
-      <option value="flash">Tarjetas (Flashcards)</option>
-      <option value="memoria">Juego de Memoria</option>
-      <option value="drag">Ordenar conceptos</option>
-    </select>
+      <button id="btnCrear">Crear el juego</button>
 
-    <button id="btnCrear">Crear el juego</button>
-  </section>
+      <p style="margin-top:10px;color:#555">
+        (Esta versión es 100% interactiva para responder. Después si querés, sumamos puntaje real y más juegos.)
+      </p>
+    </section>
 
-  <section id="juego" class="juego"></section>
-</div>
+    <section id="juego" class="juego">
+      <h2>Acá van a aparecer tus juegos</h2>
+      <p>Pegá un resumen, elegí un juego y tocá “Crear el juego”.</p>
+    </section>
+  </div>
 
-<script>
-  // Botón (evita problemas de onclick si algo se pegó mal)
-  document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("btnCrear");
-    if (btn) btn.addEventListener("click", generarJuego);
-  });
+  <script>
+    document.getElementById("btnCrear").addEventListener("click", () => {
+      const texto = document.getElementById("resumen").value.trim();
+      const tipo = document.getElementById("tipoJuego").value;
+      const zona = document.getElementById("juego");
 
-  function generarJuego() {
-    const texto = document.getElementById("resumen").value.trim();
-    const tipo = document.getElementById("tipoJuego").value;
-    const zona = document.getElementById("juego");
+      if (!texto) {
+        zona.innerHTML = '<p class="warn">⚠ Pegá un resumen primero.</p>';
+        return;
+      }
 
-    if (!texto) {
-      zona.innerHTML = "<p>⚠ Primero tenés que cargar un resumen.</p>";
-      return;
-    }
+      const frases = texto
+        .split(/[\.\n;]+/)
+        .map(s => s.trim())
+        .filter(s => s.length >= 25);
 
-    const frases = texto.split(".").map(t => t.trim()).filter(t => t.length > 20);
+      if (frases.length < 2) {
+        zona.innerHTML = '<p class="warn">⚠ Pegá un texto un poco más largo (mínimo 2–3 oraciones).</p>';
+        return;
+      }
 
-    if (tipo === "quiz") {
-      zona.innerHTML =
-        "<h2>Preguntas de opción múltiple</h2>" +
-        frases.slice(0, 3).map((f, i) =>
-          `<div style="padding:10px;margin:10px 0;border:1px solid #ddd;border-radius:10px;">
-            <p><b>Pregunta ${i+1}:</b> ${f}</p>
-            <label><input type="radio" name="q${i}"> Opción A</label><br>
-            <label><input type="radio" name="q${i}"> Opción B</label><br>
-            <label><input type="radio" name="q${i}"> Opción C</label>
-          </div>`
-        ).join("");
-      return;
-    }
+      if (tipo === "vf") {
+        const preguntas = frases.slice(0, 5);
 
-    if (tipo === "vf") {
-      zona.innerHTML =
-        "<h2>Verdadero o Falso</h2>" +
-        "<p>Elegí una opción en cada pregunta:</p>" +
-        frases.slice(0, 4).map((f, i) =>
-          `<div style="padding:10px;margin:10px 0;border:1px solid #ddd;border-radius:10px;">
-            <p><b>${i + 1})</b> ${f}</p>
-            <label style="margin-right:15px;">
-              <input type="radio" name="vf${i}" value="V"> ✅ Verdadero
-            </label>
-            <label>
-              <input type="radio" name="vf${i}" value="F"> ❌ Falso
-            </label>
-          </div>`
-        ).join("") +
-        `<button id="verRespuestas" style="margin-top:10px;padding:10px 14px;border:none;border-radius:10px;background:#4e5af7;color:white;cursor:pointer;">
-          Ver qué marqué
-        </button>
-        <div id="salidaVF" style="margin-top:10px;font-weight:bold;"></div>`;
+        zona.innerHTML =
+          "<h2>Verdadero o Falso</h2>" +
+          preguntas.map((f, i) => `
+            <div class="card" data-id="${i}">
+              <p><b>${i+1})</b> ${f}</p>
+              <div class="opciones">
+                <label><input type="radio" name="vf${i}" value="V"> ✅ Verdadero</label>
+                <label><input type="radio" name="vf${i}" value="F"> ❌ Falso</label>
+                <span class="estado" style="float:right"></span>
+              </div>
+            </div>
+          `).join("") +
+          `<button id="btnVer" style="margin-top:10px">Ver qué marqué</button>
+           <div id="salida" style="margin-top:10px"></div>`;
 
-      document.getElementById("verRespuestas").addEventListener("click", () => {
-        let resumen = "";
-        for (let i = 0; i < 4; i++) {
-          const elegido = document.querySelector(\`input[name="vf\${i}"]:checked\`);
-          resumen += \`Pregunta \${i + 1}: \${elegido ? (elegido.value === "V" ? "Verdadero" : "Falso") : "Sin responder"}<br>\`;
-        }
-        document.getElementById("salidaVF").innerHTML = resumen;
-      });
-      return;
-    }
+        document.getElementById("btnVer").addEventListener("click", () => {
+          let resumen = "";
+          for (let i = 0; i < preguntas.length; i++) {
+            const elegido = document.querySelector(\`input[name="vf\${i}"]:checked\`);
+            resumen += \`Pregunta \${i+1}: \${elegido ? (elegido.value === "V" ? "Verdadero" : "Falso") : "Sin responder"}<br>\`;
+          }
+          document.getElementById("salida").innerHTML = resumen;
+        });
 
-    if (tipo === "flash") {
-      zona.innerHTML =
-        "<h2>Tarjetas de estudio</h2>" +
-        frases.slice(0, 5).map((f, i) =>
-          `<div style="padding:10px;margin:10px 0;border:1px solid #ddd;border-radius:10px;">
-            <b>Tarjeta ${i+1}:</b> ${f}
-          </div>`
-        ).join("");
-      return;
-    }
+        return;
+      }
 
-    if (tipo === "memoria") {
-      zona.innerHTML =
-        "<h2>Juego de memoria (simple)</h2>" +
-        frases.slice(0, 6).map((f, i) =>
-          `<p>🧩 Palabra clave ${i+1}: <b>${f.split(" ")[0]}</b></p>`
-        ).join("");
-      return;
-    }
+      if (tipo === "quiz") {
+        const preguntas = frases.slice(0, 3);
+        zona.innerHTML =
+          "<h2>Opción múltiple</h2>" +
+          preguntas.map((f, i) => `
+            <div class="card">
+              <p><b>${i+1})</b> ${f}</p>
+              <div class="opciones">
+                <label><input type="radio" name="q${i}"> A</label>
+                <label><input type="radio" name="q${i}"> B</label>
+                <label><input type="radio" name="q${i}"> C</label>
+              </div>
+            </div>
+          `).join("") +
+          `<p style="color:#555">✅ Acá ya podés marcar opciones. Si querés, después agrego corrección/puntaje.</p>`;
+        return;
+      }
 
-    if (tipo === "drag") {
-      zona.innerHTML =
-        "<h2>Ordenar conceptos</h2>" +
-        frases.slice(0, 4).map((f, i) =>
-          `<div draggable="true" style="padding:8px;margin:5px;background:#e8e8ff;border-radius:5px;">
-            ${f.split(" ").slice(0, 5).join(" ")}
-          </div>`
-        ).join("");
-      return;
-    }
-
-    zona.innerHTML = "<p>Elegí un juego.</p>";
-  }
-</script>
-
+      if (tipo === "flash") {
+        const tarjetas = frases.slice(0, 6);
+        zona.innerHTML =
+          "<h2>Tarjetas</h2>" +
+          tarjetas.map((t, i) => `
+            <div class="card">
+              <b>Tarjeta ${i+1}:</b> ${t}
+            </div>
+          `).join("");
+        return;
+      }
+    });
+  </script>
 </body>
 </html>
